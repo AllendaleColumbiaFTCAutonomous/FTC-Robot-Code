@@ -3,6 +3,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
@@ -45,7 +46,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
 
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
+        telemetry.addData("Status", "Ready to Run");    //
         telemetry.update();
 
 
@@ -184,7 +185,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         runtime.reset();
         robot.rightMotor.setPower(TURN_SPEED);
         robot.leftMotor.setPower(TURN_SPEED * -1);
-        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION) && notAboutToCollide()){
+        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION)) && notAboutToCollide()){
             telemetry.addData("Path", "Turn left: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -195,7 +196,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         runtime.reset();
         robot.rightMotor.setPower(TURN_SPEED * -1);
         robot.leftMotor.setPower(TURN_SPEED );
-        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION) && notAboutToCollide()){
+        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION)) && notAboutToCollide()){
             telemetry.addData("Path", "Turn right : %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }

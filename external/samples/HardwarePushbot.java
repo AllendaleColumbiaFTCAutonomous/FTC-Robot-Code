@@ -28,11 +28,11 @@ public class HardwarePushbot
     /* Public OpMode members. */
     public DcMotor  leftMotor   = null;
     public DcMotor  rightMotor  = null;
-    public DcMotor  armMotor    = null;
+    public DcMotor  forkliftMotor    = null;
     public OpticalDistanceSensor lineSensor;   // Alternative MR ODS sensor
     public OpticalDistanceSensor wallSensor;
     public ColorSensor beaconSensor;
-    // public Servo    leftClaw    = null;
+    public Servo    forkliftServo    = null;
     // public Servo    rightClaw   = null;
 
     public static final double MID_SERVO       =  0.5 ;
@@ -56,7 +56,8 @@ public class HardwarePushbot
         // Define and Initialize Motors
         leftMotor   = hwMap.dcMotor.get("left_drive");
         rightMotor  = hwMap.dcMotor.get("right_drive");
-        armMotor    = hwMap.dcMotor.get("left_arm");
+        forkliftMotor    = hwMap.dcMotor.get("forklift_motor");
+        forkliftServo = hwMap.servo.get("forklift_servo");
         lineSensor = hwMap.opticalDistanceSensor.get("line_sensor");
         wallSensor = hwMap.opticalDistanceSensor.get("wall_sensor");
         beaconSensor = hwMap.colorSensor.get("beacon_sensor");
@@ -66,13 +67,13 @@ public class HardwarePushbot
         // Set all motors to zero power
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        armMotor.setPower(0);
+        forkliftMotor.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        forkliftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         // leftClaw = hwMap.servo.get("left_hand");

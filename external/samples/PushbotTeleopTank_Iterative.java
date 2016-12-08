@@ -78,6 +78,19 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
+
+        robot.forkliftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.forkliftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path0",  "Starting at %7d",
+                robot.forkliftMotor.getCurrentPosition());
+        telemetry.update();
     }
 
     /*
@@ -122,12 +135,14 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         // robot.rightClaw.setPosition(robot.MID_SERVO - clawOffset);
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        if (gamepad1.y)
-            robot.armMotor.setPower(robot.ARM_UP_POWER);
-        else if (gamepad1.a)
-            robot.armMotor.setPower(robot.ARM_DOWN_POWER);
-        else
-            robot.armMotor.setPower(0.0);
+        if (robot.forkliftMotor.getCurrentPosition() > 0 && robot.forkliftMotor.getCurrentPosition() < 1000){
+           if (gamepad2.y)
+               robot.forkliftMotor.setPower(robot.ARM_UP_POWER);
+           else if (gamepad2.a)
+               robot.forkliftMotor.setPower(robot.ARM_DOWN_POWER);
+           else
+               robot.forkliftMotor.setPower(0.0);
+       }
 
         // Send telemetry message to signify robot running;
         // telemetry.addData("claw",  "Offset = %.2f", clawOffset);
