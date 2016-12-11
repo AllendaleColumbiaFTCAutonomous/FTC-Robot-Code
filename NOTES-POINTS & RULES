@@ -1,0 +1,10 @@
+Points Autonomous mode:
+30pts for every beacon of same color pushed
+limit of 2 beacons can be pushed
+5pts for cap ball pushed onto floor
+note that for beacons and cap ball the team with matching color gets the points so be careful
+5 point for partially parked on either center or corner vortex
+
+Total number of points for autonomous mode is 70 for approx 20 lines of code
+
+https://firstinspiresst01.blob.core.windows.net/ftc/game-manual-part-2.pdf
