@@ -1,5 +1,4 @@
-/*
-package org.firstinspires.ftc.robotcontroller.external.samples;
+/*package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-*/
-/**
+
+*//**
  * Created by nmor99 on 11/20/2016.
  * Autunomous Opmode for red tem when we wanna hit beacons and throw exactly one ball.
  *//*
@@ -17,8 +16,8 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
 
-    */
-/* Declare OpMode members. *//*
+
+*//* Declare OpMode members. *//*
 
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
 
@@ -40,8 +39,8 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
     public void runOpMode() {
 
 
-        */
-/*
+
+*//*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          *//*
@@ -69,8 +68,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         turnBotLeft(90);
         followLine();
         pressRedBeacon();
-        */
-/* // This code pushes the other team's two beacons as well as our own
+         // This code pushes the other team's two beacons as well as our own
         turnBotRight(90);
         turnBotRight(45);
         goToBeaconLine();
@@ -86,14 +84,12 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         turnBotLeft(135);
         goForward(5.0);
         turnBotLeft(45);
-        goForward(4.0);*//*
+        goForward(4.0);
 
 
-        */
-/* // This code parks us in the corner
+        // This code parks us in the corner
         turnBotLeft(90);
         goForward(6.0);
-*//*
 
         // This code pushes off the cap ball and parks us in the middle
         turnBotLeft(135);
@@ -234,5 +230,4 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
     }
 
 
-}
-*/
+}*/

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -33,11 +34,11 @@ public class HardwarePushbot
     //public OpticalDistanceSensor wallSensor;
     //public ColorSensor beaconSensor;
     public Servo    forkliftServo    = null;
-    public Servo    buttonPusher   = null;
+    public CRServo  buttonPusher     = null;
 
-    public static final double MID_SERVO       =  0.5 ;
+    // public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.07 ;
-    public static final double ARM_DOWN_POWER  = -0.05 ;
+    public static final double ARM_DOWN_POWER  = -0.01 ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -60,8 +61,9 @@ public class HardwarePushbot
         forkliftServo = hwMap.servo.get("forklift_servo");
         forkliftServo.setPosition(1); //FORKLIFT ALWAYS STARTS UP, VERTICAL
         //IF FAILING, TRY TO SET POSITION TO INVERSE IN CASE SERVO IS WRONG DIRECTION
-        buttonPusher = hwMap.servo.get("button_servo");
-        buttonPusher.setPosition(0); //BUTTON PUSHER ALWAYS STARTS BACK
+        buttonPusher = hwMap.crservo.get("button_servo");
+        // THE FOLLOWING CODE IS USEFUL WHEN BUTTON SERVO IS A SERVO
+        // buttonPusher.setPosition(0); //BUTTON PUSHER ALWAYS STARTS BACK
         //IF FAILING, TRY TO SET POSITION TO INVERSE IN CASE SERVO IS WRONG DIRECTION
         lineSensor = hwMap.opticalDistanceSensor.get("line_sensor");
         //wallSensor = hwMap.opticalDistanceSensor.get("wall_sensor");
