@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.robot.Robot;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -48,7 +49,7 @@ import com.qualcomm.robotcore.util.Range;
  * All device access is managed through the HardwarePushbot class.
  *
  * This particular OpMode executes a basic Tank Drive Teleop for a PushBot
- * It raises and lowers the claw using the Gampad Y and A buttons respectively.
+ * It raises and lowers the claw using the Gamepad Y and A buttons respectively.
  * It also opens and closes the claws slowly using the left and right Bumper buttons.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -62,8 +63,14 @@ public class PushbotTeleopTank_Iterative extends OpMode{
     /* Declare OpMode members. */
     HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
                                                          // could also use HardwarePushbotMatrix class.
-    double          clawOffset  = 0.0 ;                  // Servo mid position
-    final double    CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
+    double          forkliftOffset  = 0.0;                  // Servo mid position
+     double          buttonPusherOffset = 0.0;
+    final double    FORKLIFTSERVO_SPEED  = 0.001;                 // sets rate to move servo
+    final double    BUTTONPUSHER_SPEED = 0.003;
+    int             directionMovement = 1;
+    boolean         y_released = true;
+    double          spinnerPower = 0.0;
+
 
 
     /*
@@ -78,6 +85,19 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
+
+        robot.forkliftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.forkliftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path0",  "Starting at %7d",
+                robot.forkliftMotor.getCurrentPosition());
+        telemetry.update();
     }
 
     /*
@@ -101,38 +121,89 @@ public class PushbotTeleopTank_Iterative extends OpMode{
     public void loop() {
         double left;
         double right;
+        double forkliftPower;
+        double buttonpusherPower;
+
+        if(gamepad1.y){
+            if(y_released) {
+                directionMovement = directionMovement * -1; //flip direction movement every time y is pressed
+                y_released = false; // triggers a flip in directionMovement once per y button press
+            }
+        }
+        else{
+            y_released = true; // if y is not pressed, flipping direction is enabled again
+        }
+
 
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
         // LINES OF ACTUAL CODE ARE COMMENTED OUT IF NOT APPLICABLE TO OUR BASIC ROBOT
-        left = -gamepad1.left_stick_y;
-        right = -gamepad1.right_stick_y;
+        if(directionMovement == 1) {
+            left = -gamepad1.left_stick_y;
+            right = -gamepad1.right_stick_y;
+        }
+        else {
+            // direction movement is negative 1, driving backwards means inverted left/right and +/-.
+            left = gamepad1.right_stick_y;
+            right = gamepad1.left_stick_y;
+        }
+        buttonpusherPower = 0.0;
+        left = Range.clip(left, -1.0, 1.0);
+        right = Range.clip(right, -1.0, 1.0);
+        if(gamepad2.right_bumper)
+            buttonpusherPower = 1.0;
+        else if(gamepad2.left_bumper)
+            buttonpusherPower = -1.0;
+        robot.buttonPusher.setPower(buttonpusherPower);
         robot.leftMotor.setPower(left);
         robot.rightMotor.setPower(right);
 
+        spinnerPower = 0.0;
+        if(gamepad1.right_bumper)
+            spinnerPower = 1.0;
+        else if(gamepad1.left_bumper)
+            spinnerPower = -1.0;
+        robot.spinnerMotor.setPower(spinnerPower);
+
+
         // Use gamepad left & right Bumpers to open and close the claw
-        // if (gamepad1.right_bumper)
-        //     clawOffset += CLAW_SPEED;
-        // else if (gamepad1.left_bumper)
-        //     clawOffset -= CLAW_SPEED;
+        if (gamepad2.right_stick_y < 0)
+            forkliftOffset += FORKLIFTSERVO_SPEED;
+        else if (gamepad2.right_stick_y > 0 )
+            forkliftOffset -= FORKLIFTSERVO_SPEED;
+
+        // Use gamepad a and x buttons to manipulate button pusher
+         if (gamepad2.a)
+            buttonPusherOffset += BUTTONPUSHER_SPEED;
+         else if (gamepad2.x)
+          buttonPusherOffset -= BUTTONPUSHER_SPEED;
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
-        // clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-        // robot.leftClaw.setPosition(robot.MID_SERVO + clawOffset);
-        // robot.rightClaw.setPosition(robot.MID_SERVO - clawOffset);
+
+
+        forkliftOffset = Range.clip(forkliftOffset, -1.0, 1.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
+        // buttonPusherOffset = Range.clip(buttonPusherOffset,0.0,1.0);
+        robot.forkliftServo.setPosition(0 + forkliftOffset); // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
+        // robot.buttonPusher.setPosition(0 + buttonPusherOffset);// CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
+
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        if (gamepad1.y)
-            robot.armMotor.setPower(robot.ARM_UP_POWER);
-        else if (gamepad1.a)
-            robot.armMotor.setPower(robot.ARM_DOWN_POWER);
-        else
-            robot.armMotor.setPower(0.0);
+        forkliftPower = -gamepad2.left_stick_y;
+        if(forkliftPower == 0){
+            robot.forkliftMotor.setPower(0.0);
+        }
+        if(forkliftPower > 0){
+            robot.forkliftMotor.setPower(robot.ARM_UP_POWER * forkliftPower);
+        }
+        if(forkliftPower < 0 && robot.forkliftMotor.getCurrentPosition() >= -10){
+            robot.forkliftMotor.setPower(robot.ARM_DOWN_POWER * forkliftPower);
+        }
 
         // Send telemetry message to signify robot running;
-        // telemetry.addData("claw",  "Offset = %.2f", clawOffset);
+        telemetry.addData("forklift",  "Offset = %.2f", forkliftOffset);
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
+        telemetry.addData("buttonPusher", "%.2f", buttonpusherPower);
     }
 
     /*
