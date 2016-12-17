@@ -59,8 +59,15 @@ public class BlueBeaconsAutoOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        turnBotRight(90);
-        goForward(10);
+
+        try{
+            wait(10000);
+        }
+        catch (InterruptedException IE){
+            telemetry.addData("Error","caught in wait 5 seconds");
+        }
+        turnBotRight(60);
+        goForward(12);
 
         /*// TEST CODE
         turnBotLeft(360);

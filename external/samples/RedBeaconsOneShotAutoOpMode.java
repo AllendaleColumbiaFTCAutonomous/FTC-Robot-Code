@@ -59,8 +59,16 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        turnBotLeft(90);
-        goForward(10);
+
+       /* try{
+            wait(10000);
+        }
+        catch (InterruptedException IE){
+            telemetry.addData("Error","caught in wait 5 seconds");
+        }*/
+
+        // turnBotLeft(60);
+        goForward(12);
 
 
         /*robot.wallSensor.enableLed(true);

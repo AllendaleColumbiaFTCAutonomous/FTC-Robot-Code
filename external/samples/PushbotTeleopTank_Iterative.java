@@ -183,7 +183,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
         forkliftOffset = Range.clip(forkliftOffset, -1.0, 1.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
         // buttonPusherOffset = Range.clip(buttonPusherOffset,0.0,1.0);
-        robot.forkliftServo.setPosition(0 + forkliftOffset); // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
+        robot.forkliftServo.setPosition(0 - forkliftOffset); // FLIPPED TO ALLOW FOR // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
         // robot.buttonPusher.setPosition(0 + buttonPusherOffset);// CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
 
 

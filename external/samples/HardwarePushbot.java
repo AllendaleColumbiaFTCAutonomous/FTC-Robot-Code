@@ -62,9 +62,10 @@ public class HardwarePushbot
         forkliftMotor    = hwMap.dcMotor.get("forklift_motor");
         spinnerMotor = hwMap.dcMotor.get("spinner");
         forkliftServo = hwMap.servo.get("forklift_servo");
-        forkliftServo.setPosition(0.01); //FORKLIFT ALWAYS STARTS UP, VERTICAL
+        forkliftServo.setPosition(0.0); //FORKLIFT ALWAYS STARTS UP, VERTICAL
         //IF FAILING, TRY TO SET POSITION TO INVERSE IN CASE SERVO IS WRONG DIRECTION
         buttonPusher = hwMap.crservo.get("button_servo");
+        buttonPusher.setPower(0.0);
         // THE FOLLOWING CODE IS USEFUL WHEN BUTTON SERVO IS A SERVO
         // buttonPusher.setPosition(0); //BUTTON PUSHER ALWAYS STARTS BACK
         //IF FAILING, TRY TO SET POSITION TO INVERSE IN CASE SERVO IS WRONG DIRECTION
