@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  */
 
 
-public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
+public class BlueBeaconsAutoOpMode extends LinearOpMode {
 
 
 /* Declare OpMode members. */
@@ -28,7 +28,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
     static final double     FORWARD_SPEED = 1.0;
     static final double     TURN_SPEED    = 1.0;
     static final double     SECONDS_PER_REVOLUTION = 2.6;
-    static final double     VELOCITY = 4.5; // IN FEET PER SECOND
+    static final double     VELOCITY = 6.0; // IN FEET PER SECOND
     static final double     LINE_THRESHOLD = 0.2;
     static final double     LINE_FOLLOW_SPEED = 0.3;
     static final double     LINE_LIGHT = 0.3;  //light spans between 0.1 - 0.5 from dark to light - near edge of line
@@ -59,19 +59,10 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        turnBotLeft(90);
+        turnBotRight(90);
         goForward(10);
 
-
-        /*robot.wallSensor.enableLed(true);
-        try{
-            wait(1000);
-        }
-        catch (InterruptedException IE){
-            telemetry.addData("Error","caught in wait 5 seconds");
-        }
-
-        // TEST CODE
+        /*// TEST CODE
         turnBotLeft(360);
         goForward(1);
         try{
@@ -85,47 +76,47 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         goToBeaconLine();
         turnBotLeft(90);
         followLine();
-        pressRedBeacon();
+        pressBlueBeacon();
         //END TEST CODE*/
 
 
 
         /*// PRESS BOTH OF OUR BEACONS FROM NEAR SIDE
-        turnBotLeft(45);
-        goToBeaconLine();
-        turnBotLeft(45);
-        followLine();
-        pressRedBeacon();
-        turnBotRight(90);
-        goToBeaconLine();
-        turnBotLeft(90);
-        followLine();
-        pressRedBeacon();
-         // This code pushes the other team's two beacons as well as our own
-        turnBotRight(90);
         turnBotRight(45);
         goToBeaconLine();
-        turnBotLeft(45);
+        turnBotRight(45);
         followLine();
-        pressRedBeacon();
-        turnBotRight(90);
+        pressBlueBeacon();
+        turnBotLeft(90);
         goToBeaconLine();
         turnBotLeft(90);
         followLine();
-        pressRedBeacon();
-
-        turnBotLeft(135);
-        goForward(5.0);
+        pressBlueBeacon();
+         // This code pushes the other team's two beacons as well as our own
+        turnBotLeft(90);
         turnBotLeft(45);
+        goToBeaconLine();
+        turnBotRight(45);
+        followLine();
+        pressBlueBeacon();
+        turnBotLeft(90);
+        goToBeaconLine();
+        turnBotRight(90);
+        followLine();
+        pressBlueBeacon();
+
+        turnBotRight(135);
+        goForward(5.0);
+        turnBotRight(45);
         goForward(4.0);
 
 
         // This code parks us in the corner
-        turnBotLeft(90);
+        turnBotRight(90);
         goForward(6.0);
 
         // This code pushes off the cap ball and parks us in the middle
-        turnBotLeft(135);
+        turnBotRight(135);
         goForward(5.0);*/
 
         // Stop all motors
@@ -136,10 +127,10 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
 
     }
 
-    public void pressRedBeacon(){
+    public void pressBlueBeacon(){
         // VERY IMPORTANT CODE GOES HERE
         robot.beaconSensor.enableLed(true);
-        if(robot.beaconSensor.red() > robot.beaconSensor.blue()){
+        if(robot.beaconSensor.blue() > robot.beaconSensor.red()){
             //if red beacon is on the left
             runtime.reset();
             robot.buttonPusher.setPower(1.0);
@@ -181,6 +172,9 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
             telemetry.update();
         }
 
+        //Go forward a little to get on the left side of the line
+        goForward(0.2);
+
         // Stop all motors
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
@@ -192,7 +186,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         runtime.reset();
         robot.rightMotor.setPower(TURN_SPEED);
         robot.leftMotor.setPower(TURN_SPEED * -1);
-        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION))){
+        while (opModeIsActive() && (runtime.seconds() < ((degrees/360) * SECONDS_PER_REVOLUTION)) && notAboutToCollide()){
             telemetry.addData("Path", "Turn left: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -234,9 +228,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
     }
 
     public boolean notAboutToCollide(){
-        robot.wallSensor.enableLed(true);
         if(robot.wallSensor.getLightDetected() < BOT_LIGHT_THRESHOLD) {
-            // robot.wallSensor.enableLed(false);
             return true;
         }
         runtime.reset();
@@ -246,7 +238,6 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
             telemetry.addData("Path", "Was about to collide : %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        robot.wallSensor.enableLed(false);
         return true;
     }
 
@@ -260,7 +251,7 @@ public class RedBeaconsOneShotAutoOpMode extends LinearOpMode {
         double currentLight = robot.lineSensor.getLightDetected();
         //while still following line
         //ensure WALL_THRESHOLD is accurate
-        while(robot.wallSensor.getLightDetected() < WAll_THRESHOLD && opModeIsActive() && notAboutToCollide()) {
+        while(robot.wallSensor.getLightDetected() < WAll_THRESHOLD && opModeIsActive()) {
             if(currentLight < lastLight && currentLight < LINE_LIGHT){
                 robot.leftMotor.setPower(LINE_FOLLOW_SPEED);
                 robot.rightMotor.setPower(LINE_FOLLOW_SPEED * currentLight/LINE_LIGHT);

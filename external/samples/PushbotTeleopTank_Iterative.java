@@ -65,7 +65,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
                                                          // could also use HardwarePushbotMatrix class.
     double          forkliftOffset  = 0.0;                  // Servo mid position
     // double          buttonPusherOffset = 0.0;
-    final double    FORKLIFTSERVO_SPEED  = 0.003;                 // sets rate to move servo
+    final double    FORKLIFTSERVO_SPEED  = 0.001;                 // sets rate to move servo
     // final double    BUTTONPUSHER_SPEED = 0.003;
     int             directionMovement = 1;
     boolean         y_released = true;
@@ -122,6 +122,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         double right;
         double forkliftPower;
         double buttonpusherPower;
+        double spinnerPower;
 
         if(gamepad1.y){
             if(y_released) {
@@ -158,6 +159,12 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         robot.rightMotor.setPower(right);
 
 
+        spinnerPower = 0.0;
+        if(gamepad1.right_bumper)
+            spinnerPower = 1.0;
+        else if(gamepad1.left_bumper)
+            spinnerPower = -1.0;
+        robot.spinnerMotor.setPower(spinnerPower);
 
         // Use gamepad left & right Bumpers to open and close the claw
         if (gamepad2.right_stick_y < 0)
@@ -174,22 +181,22 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         // Move both servos to new position.  Assume servos are mirror image of each other.
 
 
-        forkliftOffset = Range.clip(forkliftOffset, -1.0, 0.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
+        forkliftOffset = Range.clip(forkliftOffset, -1.0, 1.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
         // buttonPusherOffset = Range.clip(buttonPusherOffset,0.0,1.0);
-        robot.forkliftServo.setPosition(1 + forkliftOffset); // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
+        robot.forkliftServo.setPosition(0 + forkliftOffset); // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
         // robot.buttonPusher.setPosition(0 + buttonPusherOffset);// CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
 
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        forkliftPower = -gamepad2.left_stick_y;
+        forkliftPower = gamepad2.left_stick_y;
         if(forkliftPower == 0){
             robot.forkliftMotor.setPower(0.0);
         }
         if(forkliftPower > 0){
-            robot.forkliftMotor.setPower(robot.ARM_UP_POWER * forkliftPower);
-        }
-        if(forkliftPower < 0 && robot.forkliftMotor.getCurrentPosition() >= -10){
             robot.forkliftMotor.setPower(robot.ARM_DOWN_POWER * forkliftPower);
+        }
+        if(forkliftPower < 0){
+            robot.forkliftMotor.setPower(robot.ARM_UP_POWER * forkliftPower);
         }
 
         // Send telemetry message to signify robot running;
