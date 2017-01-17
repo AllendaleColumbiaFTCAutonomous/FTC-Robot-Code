@@ -64,12 +64,12 @@ public class PushbotTeleopTank_Iterative extends OpMode{
     HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
                                                          // could also use HardwarePushbotMatrix class.
     double          forkliftOffset  = 0.0;                  // Servo mid position
-     double          buttonPusherOffset = 0.0;
+    // double          buttonPusherOffset = 0.0;
     final double    FORKLIFTSERVO_SPEED  = 0.001;                 // sets rate to move servo
-    final double    BUTTONPUSHER_SPEED = 0.003;
+    // final double    BUTTONPUSHER_SPEED = 0.003;
     int             directionMovement = 1;
     boolean         y_released = true;
-    double          spinnerPower = 0.0;
+    double forkliftServoPosition;
 
 
 
@@ -123,6 +123,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         double right;
         double forkliftPower;
         double buttonpusherPower;
+        double spinnerPower;
 
         if(gamepad1.y){
             if(y_released) {
@@ -150,6 +151,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         buttonpusherPower = 0.0;
         left = Range.clip(left, -1.0, 1.0);
         right = Range.clip(right, -1.0, 1.0);
+        left = left * Math.abs(left); //squares the motor power, allowing for easier access to small powers, maintaining sign of variable
+        right = right * Math.abs(right); //same as above.
         if(gamepad2.right_bumper)
             buttonpusherPower = 1.0;
         else if(gamepad2.left_bumper)
@@ -158,13 +161,13 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         robot.leftMotor.setPower(left);
         robot.rightMotor.setPower(right);
 
+
         spinnerPower = 0.0;
         if(gamepad1.right_bumper)
             spinnerPower = 1.0;
         else if(gamepad1.left_bumper)
             spinnerPower = -1.0;
         robot.spinnerMotor.setPower(spinnerPower);
-
 
         // Use gamepad left & right Bumpers to open and close the claw
         if (gamepad2.right_stick_y < 0)
@@ -173,37 +176,40 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             forkliftOffset -= FORKLIFTSERVO_SPEED;
 
         // Use gamepad a and x buttons to manipulate button pusher
-         if (gamepad2.a)
-            buttonPusherOffset += BUTTONPUSHER_SPEED;
-         else if (gamepad2.x)
-          buttonPusherOffset -= BUTTONPUSHER_SPEED;
+        // if (gamepad2.a)
+        //    buttonPusherOffset += BUTTONPUSHER_SPEED;
+        // else if (gamepad2.x)
+        //   buttonPusherOffset -= BUTTONPUSHER_SPEED;
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
 
 
         forkliftOffset = Range.clip(forkliftOffset, -1.0, 1.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
         // buttonPusherOffset = Range.clip(buttonPusherOffset,0.0,1.0);
-        robot.forkliftServo.setPosition(0 + forkliftOffset); // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
+        robot.forkliftServo.setPosition(0 - forkliftOffset); // FLIPPED TO ALLOW FOR // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
         // robot.buttonPusher.setPosition(0 + buttonPusherOffset);// CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
 
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        forkliftPower = -gamepad2.left_stick_y;
+        forkliftPower = gamepad2.left_stick_y;
         if(forkliftPower == 0){
             robot.forkliftMotor.setPower(0.0);
         }
         if(forkliftPower > 0){
-            robot.forkliftMotor.setPower(robot.ARM_UP_POWER * forkliftPower);
-        }
-        if(forkliftPower < 0 && robot.forkliftMotor.getCurrentPosition() >= -10){
             robot.forkliftMotor.setPower(robot.ARM_DOWN_POWER * forkliftPower);
+        }
+        if(forkliftPower < 0){
+            robot.forkliftMotor.setPower(robot.ARM_UP_POWER * forkliftPower);
         }
 
         // Send telemetry message to signify robot running;
+        telemetry.addData("pureControllerOutputLeft", "%.2f", -gamepad1.left_stick_y);
+        telemetry.addData("pureControllerOutputRight", "%.2f", -gamepad1.right_stick_y);
         telemetry.addData("forklift",  "Offset = %.2f", forkliftOffset);
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
         telemetry.addData("buttonPusher", "%.2f", buttonpusherPower);
+        double forkliftServoPosition = robot.forkliftServo.getPosition();
     }
 
     /*
@@ -211,6 +217,9 @@ public class PushbotTeleopTank_Iterative extends OpMode{
      */
     @Override
     public void stop() {
+        while(true){
+            robot.forkliftServo.setPosition(forkliftServoPosition);
+        }
     }
 
 }
