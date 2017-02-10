@@ -31,16 +31,16 @@ public class HardwarePushbot
     public DcMotor  rightMotor  = null;
     public DcMotor  forkliftMotor    = null;
     public DcMotor spinnerMotor = null;
-    public OpticalDistanceSensor lineSensor;   // Alternative MR ODS sensor
-    public OpticalDistanceSensor wallSensor;
+    //public OpticalDistanceSensor lineSensor;   // Alternative MR ODS sensor
+    //public OpticalDistanceSensor wallSensor;
     public ColorSensor beaconSensor;
     public Servo    forkliftServo    = null;
     public CRServo  buttonPusher     = null;
     // public DcMotor
 
     // public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.2 ;
-    public static final double ARM_DOWN_POWER  =  0.02 ;
+    public static final double ARM_UP_POWER    =  0.3 ; // TEST - if too fast, lower
+    public static final double ARM_DOWN_POWER  =  0.035;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -69,8 +69,9 @@ public class HardwarePushbot
         // THE FOLLOWING CODE IS USEFUL WHEN BUTTON SERVO IS A SERVO
         // buttonPusher.setPosition(0); //BUTTON PUSHER ALWAYS STARTS BACK
         //IF FAILING, TRY TO SET POSITION TO INVERSE IN CASE SERVO IS WRONG DIRECTION
-        lineSensor = hwMap.opticalDistanceSensor.get("line_sensor");
-        wallSensor = hwMap.opticalDistanceSensor.get("wall_sensor");
+
+        //lineSensor = hwMap.opticalDistanceSensor.get("line_sensor");
+        // wallSensor = hwMap.opticalDistanceSensor.get("wall_sensor");
         beaconSensor = hwMap.colorSensor.get("beacon_sensor");
         leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors

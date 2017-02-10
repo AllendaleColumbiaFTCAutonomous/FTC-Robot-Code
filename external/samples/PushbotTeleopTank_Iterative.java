@@ -63,11 +63,13 @@ public class PushbotTeleopTank_Iterative extends OpMode{
     /* Declare OpMode members. */
     HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
                                                          // could also use HardwarePushbotMatrix class.
+    private ElapsedTime     runtime = new ElapsedTime();
+
     double          forkliftOffset  = 0.0;                  // Servo mid position
     // double          buttonPusherOffset = 0.0;
-    final double    FORKLIFTSERVO_SPEED  = 0.001;                 // sets rate to move servo
+    final double    FORKLIFTSERVO_SPEED  = 0.0005;                 // sets rate to move servo
     // final double    BUTTONPUSHER_SPEED = 0.003;
-    int             directionMovement = 1;
+    int             directionMovement = -1; //start button pusher facing forward
     boolean         y_released = true;
 
 
@@ -138,25 +140,39 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
         // LINES OF ACTUAL CODE ARE COMMENTED OUT IF NOT APPLICABLE TO OUR BASIC ROBOT
-        if(directionMovement == 1) {
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-        }
-        else {
-            // direction movement is negative 1, driving backwards means inverted left/right and +/-.
-            left = gamepad1.right_stick_y;
-            right = gamepad1.left_stick_y;
-        }
+        // direction movement is negative 1, driving backwards means inverted left/right and +/-.
+        left = gamepad1.right_stick_y; // initially inverted due to starting with button pusher forward
+        right = gamepad1.left_stick_y;
         buttonpusherPower = 0.0;
+        telemetry.addData("controller output left", left);
+        telemetry.addData("controller output right", right);
         left = Range.clip(left, -1.0, 1.0);
         right = Range.clip(right, -1.0, 1.0);
+        if( left > 0.0) {
+            left = 0.9 * Math.pow(left, 2.5) + 0.1; //squares the motor power, allowing for easier access to small powers, maintaining sign of variable
+        }
+        if (right > 0.0) {
+            right = 0.9 * Math.pow(right, 2.5) + 0.1; //same as above.
+        }
+        if(left < 0.0) {
+            left = -0.9 * Math.pow(Math.abs(left), 2.5) - 0.1; //squares the motor power, allowing for easier access to small powers, maintaining sign of variable
+        }
+        if (right < 0.0) {
+            right = -0.9 * Math.pow(Math.abs(right), 2.5) - 0.1; //same as above.
+        }
+        if(directionMovement == 1){
+            robot.leftMotor.setPower(-1 * right);
+            robot.rightMotor.setPower(-1 * left);
+        }else{
+            robot.leftMotor.setPower(left);
+            robot.rightMotor.setPower(right);
+        }
         if(gamepad2.right_bumper)
             buttonpusherPower = 1.0;
         else if(gamepad2.left_bumper)
             buttonpusherPower = -1.0;
         robot.buttonPusher.setPower(buttonpusherPower);
-        robot.leftMotor.setPower(left);
-        robot.rightMotor.setPower(right);
+
 
 
         spinnerPower = 0.0;
@@ -181,7 +197,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         // Move both servos to new position.  Assume servos are mirror image of each other.
 
 
-        forkliftOffset = Range.clip(forkliftOffset, -1.0, 1.0); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
+        forkliftOffset = Range.clip(forkliftOffset, -0.5, 0.2); // IF CHANGE STARTING POSITION, CHANGE OFFSET RANG
         // buttonPusherOffset = Range.clip(buttonPusherOffset,0.0,1.0);
         robot.forkliftServo.setPosition(0 - forkliftOffset); // FLIPPED TO ALLOW FOR // CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
         // robot.buttonPusher.setPosition(0 + buttonPusherOffset);// CHANGE IF STARTING POSITION OF SERVO MUST CHANGE
